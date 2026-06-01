@@ -194,12 +194,12 @@ Exemplo de saída:
 
 ```
 [2025-05-31 14:22:01] [IDS]    IP:127.0.0.1 | Rota:/login | SQL Injection detectado no campo 'email' | Status:403
-[2025-05-31 14:22:01] [EMAIL]  Enviado para altdohyago123@gmail.com: ALERTA IDS — SQLI | Status:OK
+[2025-05-31 14:22:01] [EMAIL]  Enviado para seu@email.com: ALERTA IDS — SQLI | Status:OK
 [2025-05-31 14:22:05] [LOGIN]  IP:127.0.0.1 | Rota:/login | Error SQL Injection — credenciais invalidas: hacker@evil.com | Status:401
-[2025-05-31 14:22:05] [EMAIL]  Enviado para altdohyago123@gmail.com: ⚠️ Error SQL Injection — hacker@evil.com | Status:OK
+[2025-05-31 14:22:05] [EMAIL]  Enviado para seu@email.com: ⚠️ Error SQL Injection — hacker@evil.com | Status:OK
 [2025-05-31 14:22:05] [EMAIL]  Enviado para triggersecurity.ids@gmail.com: [LOG] ⚠️ Error SQL Injection — hacker@evil.com | Status:OK
 [2025-05-31 14:22:10] [LOGIN]  IP:127.0.0.1 | Rota:/login | Login bem-sucedido: admin@trigger.com.br | Status:200
-[2025-05-31 14:22:10] [EMAIL]  Enviado para altdohyago123@gmail.com: ✅ Login bem-sucedido — admin@trigger.com.br | Status:OK
+[2025-05-31 14:22:10] [EMAIL]  Enviado para seu@email.com: ✅ Login bem-sucedido — admin@trigger.com.br | Status:OK
 [2025-05-31 14:22:10] [EMAIL]  Enviado para triggersecurity.ids@gmail.com: [LOG] ✅ Login bem-sucedido — admin@trigger.com.br | Status:OK
 ```
 
