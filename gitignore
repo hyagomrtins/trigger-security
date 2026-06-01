@@ -1,0 +1,33 @@
+# ==============================================
+# TRIGGER SECURITY — .gitignore
+# ==============================================
+
+# Credenciais — NUNCA commitar no GitHub
+.env
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ambientes virtuais
+venv/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs locais (se criados)
+*.log

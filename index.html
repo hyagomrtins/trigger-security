@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TRIGGER SECURITY — Sistema de Monitoramento de Acesso e IDS/WAF">
+<title>TRIGGER SECURITY — Sistema de Monitoramento</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--c:#00e5ff;--w:#f0f8ff;--bg:#000a14;--bg2:#001a2c;--sec:#8899aa;--err:#ff2255;--gb:rgba(255,255,255,0.04);--gbd:rgba(0,229,255,0.15);--gs:0 0 30px rgba(0,229,255,0.08),0 0 60px rgba(0,229,255,0.04);--f:'Space Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f);background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--w);min-height:100vh;overflow-x:hidden;position:relative}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.grid-bg svg{width:100%;height:100%;opacity:.06}
+.grid-bg svg line{stroke:var(--c);stroke-width:.5;animation:gp 8s ease-in-out infinite alternate}
+@keyframes gp{0%{opacity:.3}50%{opacity:1}100%{opacity:.3}}
+@keyframes glow{0%,100%{text-shadow:0 0 10px rgba(0,229,255,.4),0 0 30px rgba(0,229,255,.2)}50%{text-shadow:0 0 20px rgba(0,229,255,.8),0 0 60px rgba(0,229,255,.4),0 0 100px rgba(0,229,255,.15)}}
+@keyframes fsi{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-3px)}90%{transform:translateX(3px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.shake{animation:shake .5s ease-in-out}
+#tela-login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;position:relative;z-index:1;animation:fsi .8s ease-out;padding:20px}
+.login-card{backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:var(--gb);border:1px solid var(--gbd);box-shadow:var(--gs);padding:48px 40px;width:100%;max-width:440px}
+.login-titulo{font-size:1.6rem;font-weight:700;letter-spacing:.3em;color:var(--c);text-align:center;margin-bottom:8px;animation:glow 3s ease-in-out infinite}
+.login-sub{font-size:.75rem;color:var(--sec);text-align:center;margin-bottom:36px;letter-spacing:.05em}
+.ig{position:relative;margin-bottom:28px}
+.ig input{width:100%;padding:14px 48px 14px 16px;font-family:var(--f);font-size:.85rem;color:var(--w);background:rgba(0,10,20,.6);border:1px solid rgba(0,229,255,.2);outline:none;transition:border-color .3s,box-shadow .3s}
+.ig input:focus{border-color:var(--c);box-shadow:0 0 12px rgba(0,229,255,.15)}
+.ig label{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:.8rem;color:var(--sec);pointer-events:none;transition:all .25s ease}
+.ig input:focus~label,.ig input:not(:placeholder-shown)~label{top:-8px;left:12px;font-size:.65rem;color:var(--c);background:var(--bg);padding:0 6px}
+.tg{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--sec);cursor:pointer;font-size:.75rem;font-family:var(--f);transition:color .2s}
+.tg:hover{color:var(--c)}
+.btn-auth{width:100%;padding:14px;font-family:var(--f);font-size:.85rem;font-weight:700;letter-spacing:.15em;color:var(--bg);background:linear-gradient(135deg,var(--c),#0088cc);border:none;cursor:pointer;transition:opacity .3s,transform .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-auth:hover{opacity:.9;transform:translateY(-1px)}
+.btn-auth:active{transform:translateY(0)}
+.btn-auth:disabled{opacity:.5;cursor:not-allowed}
+.sp{display:none;width:16px;height:16px;border:2px solid rgba(0,10,20,.3);border-top-color:var(--bg);border-radius:50%;animation:spin .6s linear infinite}
+.btn-auth.loading .sp{display:inline-block}
+.btn-auth.loading .bt{opacity:.6}
+.fb{margin-top:20px;padding:0;font-size:.75rem;text-align:center;min-height:20px;transition:all .3s;line-height:1.5}
+.fb.erro{color:var(--err)}.fb.bloqueio{color:#ff6600}.fb.sucesso{color:#00ff88}.fb.alerta{color:#ffaa00}
+.footer{position:fixed;bottom:0;left:0;right:0;text-align:center;padding:16px;font-size:.65rem;color:var(--sec);letter-spacing:.1em;z-index:1}
+#tela-dash{display:none;min-height:100vh;position:relative;z-index:1;animation:fsi .6s ease-out}
+.dh{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;background:rgba(0,10,20,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,229,255,.2)}
+.dl{font-size:.9rem;font-weight:700;letter-spacing:.2em;color:var(--c);animation:glow 3s ease-in-out infinite;white-space:nowrap}
+.dn{display:flex;gap:24px}
+.dn a{color:var(--sec);text-decoration:none;font-size:.75rem;letter-spacing:.05em;transition:color .2s;cursor:pointer}
+.dn a:hover,.dn a.active{color:var(--c)}
+.du{display:flex;align-items:center;gap:12px}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--c),#0088cc);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--bg)}
+.un{font-size:.7rem;color:var(--sec);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bs{padding:6px 16px;font-family:var(--f);font-size:.7rem;letter-spacing:.1em;color:var(--err);background:none;border:1px solid rgba(255,34,85,.3);cursor:pointer;transition:background .2s,border-color .2s}
+.bs:hover{background:rgba(255,34,85,.1);border-color:var(--err)}
+.db{padding:100px 32px 40px;max-width:1100px;margin:0 auto}
+.dw{font-size:.8rem;color:var(--sec);margin-bottom:40px;letter-spacing:.05em}
+.dw span{color:var(--c)}
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.dc{backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:var(--gb);border:1px solid var(--gbd);box-shadow:var(--gs);padding:32px;transition:transform .3s,box-shadow .3s;animation:fsi .6s ease-out backwards}
+.dc:nth-child(1){animation-delay:.1s}.dc:nth-child(2){animation-delay:.25s}.dc:nth-child(3){animation-delay:.4s}
+.dc:hover{transform:translateY(-4px);box-shadow:0 0 40px rgba(0,229,255,.12),0 0 80px rgba(0,229,255,.06)}
+.ci{margin-bottom:16px}.ci svg{width:36px;height:36px;stroke:var(--c);fill:none;stroke-width:1.5}
+.ct{font-size:.85rem;font-weight:700;letter-spacing:.15em;color:var(--c);margin-bottom:8px}
+.cs{font-size:.7rem;color:#00ff88;display:flex;align-items:center;gap:8px}
+.cs::before{content:'';width:6px;height:6px;border-radius:50%;background:#00ff88;animation:glow 2s infinite}
+@media(max-width:768px){.login-card{padding:36px 24px}.dn{display:none}.dh{padding:0 16px}.db{padding:88px 16px 40px}.un{display:none}}
+</style>
+</head>
+<body>
+<div class="grid-bg"><svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><pattern id="g" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="60" y1="0" x2="60" y2="60"/><line x1="0" y1="60" x2="60" y2="60"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/></svg></div>
+
+<section id="tela-login">
+<div class="login-card">
+<h1 class="login-titulo">TRIGGER SECURITY</h1>
+<p class="login-sub">// sistema de monitoramento de acesso</p>
+<form id="frmL" autocomplete="off">
+<div class="ig"><input type="text" id="iE" placeholder=" " required autocomplete="username"><label for="iE">E-MAIL</label></div>
+<div class="ig"><input type="password" id="iS" placeholder=" " required><label for="iS">SENHA</label><button type="button" class="tg" id="bT">SHOW</button></div>
+<button type="submit" class="btn-auth" id="bL"><span class="bt">AUTENTICAR</span><span class="sp"></span></button>
+</form>
+<div class="fb" id="fb"></div>
+</div>
+</section>
+
+<section id="tela-dash">
+<header class="dh">
+<div class="dl">TRIGGER SECURITY</div>
+<nav class="dn"><a class="active">Dashboard</a><a>Monitoramento</a><a>Relatórios</a><a>Configurações</a></nav>
+<div class="du"><div class="av" id="aL"></div><span class="un" id="uN"></span><button class="bs" id="bS">SAIR</button></div>
+</header>
+<div class="db">
+<p class="dw">// acesso autorizado — bem-vindo, <span id="wE"></span></p>
+<div class="cg">
+<div class="dc"><div class="ci"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="ct">SISTEMA ONLINE</div><div class="cs">Operacional</div></div>
+<div class="dc"><div class="ci"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="ct">IDS ATIVO</div><div class="cs">Monitorando ameaças</div></div>
+<div class="dc"><div class="ci"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="ct">MONITORANDO</div><div class="cs">Tráfego em análise</div></div>
+</div>
+</div>
+</section>
+
+<footer class="footer">TRIGGER SECURITY &copy; 2025 — Sistema Protegido</footer>
+
+<script>
+!function(){"use strict";
+var RX_SQL=/('|--|\/\*|\*\/|union|select|drop|insert|delete|or\s+1=1|;\s*drop|exec\s*\(|cast\s*\(|char\s*\(|0x[0-9a-f]+|%27|%20or%20)/i,
+    RX_XSS=/(<script|javascript:|onerror=|onload=|<img|alert\s*\(|<svg|<iframe)/i;
+var fL=document.getElementById("frmL"),iE=document.getElementById("iE"),iS=document.getElementById("iS"),
+    bT=document.getElementById("bT"),bL=document.getElementById("bL"),fb=document.getElementById("fb"),
+    tL=document.getElementById("tela-login"),tD=document.getElementById("tela-dash"),bS=document.getElementById("bS"),
+    tv=0;
+
+bT.addEventListener("click",function(){var p=iS.type==="password";iS.type=p?"text":"password";bT.textContent=p?"HIDE":"SHOW"});
+
+function moFb(m,t){fb.textContent=m;fb.className="fb "+t;fb.parentElement.classList.add("shake");setTimeout(function(){fb.parentElement.classList.remove("shake")},500)}
+
+function detAt(v){if(RX_SQL.test(v))return"sqli";if(RX_XSS.test(v))return"xss";return null}
+
+var base_url = window.location.protocol === 'file:' ? 'http://localhost:8080' : '';
+
+function envAl(tipo,pay,campo){
+  fetch(base_url + "/alert",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({tipo:tipo,payload_parcial:pay.substring(0,200),campo:campo})})
+  .then(function(r){if(!r.ok)console.warn("[TRIGGER] /alert respondeu HTTP "+r.status);else console.info("[TRIGGER] Alerta registrado no servidor (",tipo,"campo:",campo,")")})
+  .catch(function(err){console.error("[TRIGGER] Servidor inacessivel — alerta NAO enviado ao backend:",err);moFb("\u26a0 ALERTA detectado localmente. Servidor offline — verifique se python3 server.py esta rodando.","alerta")});
+}
+
+function exDash(email){tL.style.display="none";tD.style.display="block";document.getElementById("aL").textContent=email.charAt(0).toUpperCase();document.getElementById("uN").textContent=email;document.getElementById("wE").textContent=email;tv=0}
+
+bS.addEventListener("click",function(){tD.style.display="none";tL.style.display="flex";iE.value="";iS.value="";fb.textContent="";fb.className="fb";iS.type="password";bT.textContent="SHOW"});
+
+fL.addEventListener("submit",function(e){e.preventDefault();
+var em=iE.value.trim(),sn=iS.value;
+if(!em||!sn){moFb("Preencha todos os campos.","erro");return}
+var ca=[{n:"email",v:em},{n:"senha",v:sn}];
+for(var i=0;i<ca.length;i++){var at=detAt(ca[i].v);if(at){moFb("\u26a0 ALERTA: Tentativa de "+(at==="sqli"?"SQL Injection":"Cross-Site Scripting")+" detectada e registrada.","alerta");envAl(at,ca[i].v,ca[i].n);return}}
+bL.classList.add("loading");bL.disabled=true;fb.textContent="";fb.className="fb";
+fetch(base_url + "/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,senha:sn})}).then(function(r){return r.json()}).then(function(d){
+bL.classList.remove("loading");bL.disabled=false;
+if(d.status==="ok"){moFb("Acesso autorizado.","sucesso");setTimeout(function(){exDash(d.usuario)},600)}
+else if(d.status==="bloqueado"){moFb("\ud83d\udd12 BLOQUEADO: "+d.motivo,"bloqueio")}
+else if(d.status==="invalido"){tv++;moFb("Credenciais inv\u00e1lidas. Tentativa "+tv+"/5","erro")}
+else if(d.status==="erro"){moFb("Erro: "+d.motivo,"erro")}
+}).catch(function(){bL.classList.remove("loading");bL.disabled=false;moFb("Falha na conex\u00e3o com o servidor.","erro")})});
+}();
+</script>
+</body>
+</html>
