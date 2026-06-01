@@ -72,7 +72,7 @@ Ao iniciar, o sistema testa a conexão SMTP e exibe o status:
 ```
 [*] Testando conexao SMTP...
 [*] E-mail   : OK — Autenticado com sucesso
-[*] Pessoal  : altdohyago123@gmail.com            ← alertas resumidos
+[*] Pessoal  : seu@email.com            ← alertas resumidos
 [*] LOG      : triggersecurity.ids@gmail.com       ← relatórios detalhados
 [*] DB       : sqlite3 :memory: OK
 ```

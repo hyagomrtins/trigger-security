@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from urllib.parse import unquote
 # Configuração de e-mail
-EMAIL_DESTINO = "altdohyago123@gmail.com"       # E-mail pessoal — recebe alertas resumidos
+EMAIL_DESTINO = "seu@email.com"       # E-mail pessoal — recebe alertas resumidos
 EMAIL_LOG     = "triggersecurity.ids@gmail.com"  # E-mail de LOG — recebe dados detalhados
 EMAIL_ORIGEM  = "triggersecurity.ids@gmail.com"  # Conta Gmail remetente
 EMAIL_SENHA   = "lqsygzgwhbzilqxf"              # App Password sem espaços — obrigatório
